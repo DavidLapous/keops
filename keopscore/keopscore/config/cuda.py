@@ -300,12 +300,13 @@ class CUDAConfig:
         # Check if CUDA is installed via conda
         conda_prefix = os.getenv("CONDA_PREFIX")
         if conda_prefix:
-            include_path = Path(conda_prefix) / "include"
-            if (include_path / "cuda.h").is_file() and (
-                include_path / "nvrtc.h"
-            ).is_file():
-                self.cuda_include_path = str(include_path)
-                return self.cuda_include_path
+            for arch in ["", "targets/x86_64-linux", "targets/ppc64le-linux", "targets/sbsa-linux"]:
+                include_path = Path(conda_prefix) /  arch / "include"
+                if (include_path / "cuda.h").is_file() and (
+                    include_path / "nvrtc.h"
+                ).is_file():
+                    self.cuda_include_path = str(include_path)
+                    return self.cuda_include_path
 
         # Check standard locations
         cuda_version_str = self.get_cuda_version(out_type="string")
